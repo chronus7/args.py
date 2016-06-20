@@ -4,6 +4,8 @@
 
 Currently only works for positional arguments. Other
 types than strings should be annotated correctly (callable).
+
+- Dave J (https://github.com/chronus7)
 """
 from sys import argv
 from inspect import isfunction as _isfunction
