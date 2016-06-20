@@ -1,6 +1,4 @@
-# args.py
-
-----
+# `args.py`
 
 A small in-place argument-parser. Call it in your python file to easily provide
 a commandline-interface to your functions.
