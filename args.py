@@ -8,6 +8,7 @@ types than strings should be annotated correctly (callable).
 - Dave J (https://github.com/chronus7)
 """
 from sys import argv
+from shlex import split as _split
 from inspect import isfunction as _isfunction
 from inspect import getfullargspec as _getargs
 from inspect import stack as _getstack
@@ -15,6 +16,11 @@ from inspect import getmodule as _getmodule
 
 
 __all__ = ["args"]
+
+
+def _get_calling_module():
+    # TODO test/check whether this always works!
+    return _getmodule(_getstack()[-1][0])
 
 
 def commands(*, globalvars=globals()):
@@ -26,12 +32,13 @@ def commands(*, globalvars=globals()):
 
 def usage(*, globalvars=globals()):
     """Prints this usage message and exits"""
-    print("Usage: {} ...".format(argv[0]))
+    print("Usage: {} <command> [arguments]".format(argv[0]))
 
-    if __doc__:
-        print(__doc__.strip())
+    doc = _get_calling_module().__doc__
+    if doc:
+        print(doc.strip())
 
-    print()
+    print("\nCommands:")
 
     fs = {}
     for k, v in globalvars.items():
@@ -56,17 +63,16 @@ def usage(*, globalvars=globals()):
     exit(0)
 
 
-def args():
+def args(arguments: _split=argv[1:]):
     """Parses the cmd-arguments to execute the requested command."""
     # getting arguments
     try:
-        _, f, *a = argv
+        f, *a = arguments
     except ValueError:
         raise Exception("Requires function or --help.")
 
     # get caller
-    frame = _getstack()[1]
-    module = _getmodule(frame[0])
+    module = _get_calling_module()
 
     # getting functions
     funcs = {k: v for k, v in vars(module).items()

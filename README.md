@@ -11,6 +11,7 @@ a commandline-interface to your functions.
 - automatic usage-generation (`test.py -h`)
 - parsing of arguments into the respective type (if annotated)
 - `--list-commands` to retrieve a machine-readable list of all possible commands
+- ignoring functions, starting with `_`
 
 Check out `test.py` for examples and usage of this module.
 
