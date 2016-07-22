@@ -90,12 +90,17 @@ def args(arguments: _split=argv[1:]):
     for i, (val, name) in enumerate(zip(a, fspecs.args)):
         if name in fspecs.annotations:
             a[i] = fspecs.annotations[name](val)
+    if fspecs.varargs:
+        l = len(fspecs.args)
+        vals = a[l:]
+        if fspecs.varargs in fspecs.annotations:
+            a[l:] = fspecs.annotations[fspecs.varargs](vals)
 
     # executing
     if ff in {usage, commands}:
         ff(globalvars=funcs)
     else:
-        ff(*a)
+        return ff(*a)
 
 if __name__ == '__main__':
     args()

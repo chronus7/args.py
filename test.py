@@ -15,8 +15,14 @@ def equal(a, b):
 
 
 def join(c: str, *a):
-    """joins the arguments with the first one"""
+    """Joins the arguments with the first one"""
     print(c.join(a))
+
+
+def add(*i: lambda x: list(map(float, x))):
+    """Adds the given numbers"""
+    from functools import reduce
+    print(reduce(float.__add__, i, 0.0))
 
 
 def echo(i: str):
