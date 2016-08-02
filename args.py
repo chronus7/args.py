@@ -63,10 +63,21 @@ def usage(*, globalvars=globals()):
     exit(0)
 
 
-def args(arguments: _split=argv[1:]):
-    """Parses the cmd-arguments to execute the requested command."""
+def args(arguments: _split=argv[1:], stdin_char: str='-'):
+    """Parses the cmd-arguments to execute the requested command.
+    :param arguments:       The arguments to use (default: argv[1:]).
+    :param stdin_char:      The char to denote stdin-input. Use
+                            None to disable (default: '-')."""
     # getting arguments
     try:
+        if stdin_char is not None and arguments[-1] == stdin_char:
+            del arguments[-1]
+            while True:
+                try:
+                    i = input()
+                    arguments.append(i)
+                except EOFError:
+                    break
         f, *a = arguments
     except ValueError:
         raise Exception("Requires function or --help.")

@@ -12,6 +12,7 @@ a commandline-interface to your functions.
 - parsing of arguments into the respective type (if annotated)
 - `--list-commands` to retrieve a machine-readable list of all possible commands
 - ignoring functions, starting with `_`
+- allowing arguments to be passed via stdin
 
 Check out `test.py` for examples and usage of this module.
 
