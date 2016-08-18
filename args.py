@@ -7,7 +7,7 @@ types than strings should be annotated correctly (callable).
 
 - Dave J (https://github.com/chronus7)
 """
-from sys import argv
+from sys import argv, stderr
 from shlex import split as _split
 from inspect import isfunction as _isfunction
 from inspect import getfullargspec as _getargs
@@ -79,8 +79,9 @@ def args(arguments: _split=argv[1:], stdin_char: str='-'):
                 except EOFError:
                     break
         f, *a = arguments
-    except ValueError:
-        raise Exception("Requires function or --help.")
+    except (ValueError, IndexError):
+        print("ERROR: Requires function or --help!", file=stderr)
+        exit(1)
 
     # get caller
     module = _get_calling_module()
