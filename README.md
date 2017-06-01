@@ -13,8 +13,16 @@ a commandline-interface to your functions.
 - `--list-commands` to retrieve a machine-readable list of all possible commands
 - ignoring functions, starting with `_`
 - allowing arguments to be passed via stdin
+- works even with `pdb`
 
 Check out `test.py` for examples and usage of this module.
+
+## Known Issues:
+
+- `pdb` finishes with `ValueError: I/O operation on closed file.` when calling
+  `-h` or `--list-commands`.
+- import not working as intended in all situations (probably name clashes)
+- no setup.py
 
 ----
 

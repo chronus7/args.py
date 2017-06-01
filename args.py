@@ -19,8 +19,15 @@ __all__ = ["args"]
 
 
 def _get_calling_module():
-    # TODO test/check whether this always works!
-    return _getmodule(_getstack()[-1][0])
+    # try to find the latest
+    frame = None
+    for fi in reversed(_getstack()):
+        frame = fi.frame
+        if not any(map(lambda x: fi.filename.endswith(x),
+                       ('pdb.py', 'bdb.py', 'runpy.py')))\
+                and fi.code_context is not None:
+            break
+    return _getmodule(frame)
 
 
 def commands(*, globalvars=globals()):
@@ -50,11 +57,10 @@ def usage(*, globalvars=globals()):
         specs = _getargs(func)
         variables = []
         for v in specs.args:
-            vv = v
             if v in specs.annotations:
-                vv += ":" + specs.annotations[v].__name__
+                v += ":" + specs.annotations[v].__name__
             # TODO missing kw[only]args
-            variables.append(vv)
+            variables.append(v)
         print(' | '.join(sorted(cmds)), ' '.join(variables))
         docs = func.__doc__
         if docs:
@@ -63,11 +69,16 @@ def usage(*, globalvars=globals()):
     exit(0)
 
 
-def args(arguments: _split=argv[1:], stdin_char: str='-'):
+def args(arguments: _split=argv[1:], stdin_char: str='-',
+         **mappings):
     """Parses the cmd-arguments to execute the requested command.
+
     :param arguments:       The arguments to use (default: argv[1:]).
     :param stdin_char:      The char to denote stdin-input. Use
-                            None to disable (default: '-')."""
+                            None to disable (default: '-').
+    :param mappings:        Additional/custom mappings
+                            (i.e. {'command': function}).
+    """
     # getting arguments
     try:
         if stdin_char is not None and arguments[-1] == stdin_char:
@@ -91,6 +102,7 @@ def args(arguments: _split=argv[1:], stdin_char: str='-'):
              if not k.startswith('_') and _isfunction(v)}
     funcs['--help'] = funcs['-h'] = funcs['help'] = usage
     funcs['--list-commands'] = commands
+    funcs.update(mappings)      # use defined mappings
     if f not in funcs:
         raise Exception("Invalid function '{}'.".format(f))
 
@@ -113,6 +125,7 @@ def args(arguments: _split=argv[1:], stdin_char: str='-'):
         ff(globalvars=funcs)
     else:
         return ff(*a)
+
 
 if __name__ == '__main__':
     args()

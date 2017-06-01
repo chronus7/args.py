@@ -1,6 +1,8 @@
 #!/bin/env python3
 # -*- coding:utf-8 -*-
 """Test usage of args.py
+
+Call via `python test.py -h` to get usage information.
 """
 
 
@@ -22,7 +24,8 @@ def join(c: str, *a):
 def add(*i: lambda x: list(map(float, x))):
     """Adds the given numbers"""
     from functools import reduce
-    print(reduce(float.__add__, i, 0.0))
+    from operator import add
+    print(reduce(add, i, 0))
 
 
 def echo(i: str):
@@ -33,4 +36,4 @@ def echo(i: str):
 
 if __name__ == '__main__':
     import args
-    args.args()
+    args.args(**{'--test': testfunc})
